@@ -4,5 +4,17 @@
   "key.torch-placer.config": "Open Torch Placer Config",
   "screen.torch-placer.title": "Torch Placer Settings",
   "screen.torch-placer.save": "Save",
-  "screen.torch-placer.cancel": "Cancel"
+  "screen.torch-placer.cancel": "Cancel",
+
+  "item.torch-placer.oak_torch":      "Oak Torch",
+  "item.torch-placer.spruce_torch":   "Spruce Torch",
+  "item.torch-placer.birch_torch":    "Birch Torch",
+  "item.torch-placer.jungle_torch":   "Jungle Torch",
+  "item.torch-placer.acacia_torch":   "Acacia Torch",
+  "item.torch-placer.dark_oak_torch": "Dark Oak Torch",
+  "item.torch-placer.mangrove_torch": "Mangrove Torch",
+  "item.torch-placer.cherry_torch":   "Cherry Torch",
+  "item.torch-placer.bamboo_torch":   "Bamboo Torch",
+  "item.torch-placer.crimson_torch":  "Crimson Torch",
+  "item.torch-placer.warped_torch":   "Warped Torch"
 }

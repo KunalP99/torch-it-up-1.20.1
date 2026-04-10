@@ -1,6 +1,6 @@
 # Torch Placer
 
-A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark areas around you as you explore.
+A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark areas around you as you explore. Supports vanilla torches and 11 wood-variant torches, each with its own custom texture.
 
 ## Requirements
 
@@ -12,7 +12,38 @@ A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark area
 
 When enabled, the mod scans the blocks around you every 2 seconds. If it finds a spot that is darker than your configured light threshold, it will automatically take a torch from your inventory and place it there — prioritising side walls, then the front wall, then the floor.
 
-No torches in your inventory means no placement.
+The mod checks your inventory in order and uses the first torch it finds — vanilla or any wood variant. No torches in your inventory means no placement.
+
+## Wood-Variant Torches
+
+In addition to the vanilla torch, the mod adds 11 wood-typed torches — one for each wood type in the game. Each has its own appearance and is treated identically to a vanilla torch for auto-placement purposes.
+
+| Torch | Crafting ingredient |
+|-------|-------------------|
+| Oak Torch | Oak Planks |
+| Spruce Torch | Spruce Planks |
+| Birch Torch | Birch Planks |
+| Jungle Torch | Jungle Planks |
+| Acacia Torch | Acacia Planks |
+| Dark Oak Torch | Dark Oak Planks |
+| Mangrove Torch | Mangrove Planks |
+| Cherry Torch | Cherry Planks |
+| Bamboo Torch | Bamboo Planks |
+| Crimson Torch | Crimson Planks |
+| Warped Torch | Warped Planks |
+
+### Crafting
+
+Each wood torch is crafted in any crafting grid (including the 2×2 inventory grid):
+
+```
+[ Plank ]
+[ Torch ]
+```
+
+Place the matching wood plank directly above a vanilla torch. Yields 1 wood torch.
+
+All wood torches emit the same light level as a vanilla torch and can be placed on floors and walls the same way.
 
 ## Keybindings
 
@@ -54,6 +85,7 @@ Open the settings screen with your bound key (or via the Controls menu). Changes
 ## Tips
 
 - Keep torches in your inventory — the mod uses them up just like placing manually.
+- Wood torches work identically to vanilla torches for auto-placement. Mix types freely.
 - A smaller scan radius (3–4) places torches closer to you, giving more precise coverage in tight caves.
 - A higher light threshold (10–12) is useful in the Nether or End where you want aggressive lighting.
 - The config is saved per-installation to `config/torch-placer.json` and persists between sessions.

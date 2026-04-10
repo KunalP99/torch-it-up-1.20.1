@@ -5,8 +5,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.WallTorchBlock;
 
@@ -28,15 +30,33 @@ public class TorchPlacerLogic {
         }
     }
 
+    private record TorchEntry(int slot, Block floor, Block wall) {}
+
+    private static TorchEntry findTorchEntry(ServerPlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(Items.TORCH))
+                return new TorchEntry(i, Blocks.TORCH, Blocks.WALL_TORCH);
+            for (WoodTorchVariant v : WoodTorchVariant.values())
+                if (stack.is(ModItems.ITEMS.get(v)))
+                    return new TorchEntry(i, ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v));
+        }
+        return null;
+    }
+
     private static void tryPlaceTorch(ServerPlayer player, TorchPlacerConfig config) {
-        int torchSlot = findTorchSlot(player);
-        if (torchSlot == -1) return;
+        TorchEntry entry = findTorchEntry(player);
+        if (entry == null) return;
 
         ServerLevel world = (ServerLevel) player.level();
         BlockPos playerPos = player.blockPosition();
+        Direction facing = player.getDirection();
+        Direction sideA = facing.getClockWise();
+        Direction sideB = facing.getCounterClockWise();
         int radius = config.scanRadius;
 
-        record Candidate(BlockPos pos, boolean isWall, Direction wallFacing, int lightLevel) {}
+        // priority: 0 = side wall, 1 = front/back wall, 2 = floor
+        record Candidate(BlockPos pos, boolean isWall, Direction wallFacing, int lightLevel, int priority) {}
         List<Candidate> candidates = new ArrayList<>();
 
         for (int dx = -radius; dx <= radius; dx++) {
@@ -54,8 +74,10 @@ public class TorchPlacerLogic {
                         for (Direction dir : Direction.Plane.HORIZONTAL) {
                             BlockPos neighbor = pos.relative(dir);
                             if (world.getBlockState(neighbor).isFaceSturdy(world, neighbor, dir.getOpposite())) {
-                                // Torch faces away from the wall
-                                candidates.add(new Candidate(pos, true, dir.getOpposite(), light));
+                                // Torch faces away from the wall; wall is in direction dir from torch
+                                boolean isSideWall = (dir == sideA || dir == sideB);
+                                int priority = isSideWall ? 0 : 1;
+                                candidates.add(new Candidate(pos, true, dir.getOpposite(), light, priority));
                                 break;
                             }
                         }
@@ -65,36 +87,29 @@ public class TorchPlacerLogic {
                     if (config.placementMode != PlacementMode.WALLS_ONLY) {
                         BlockPos below = pos.below();
                         if (world.getBlockState(below).isFaceSturdy(world, below, Direction.UP)) {
-                            candidates.add(new Candidate(pos, false, null, light));
+                            candidates.add(new Candidate(pos, false, null, light, 2));
                         }
                     }
                 }
             }
         }
 
-        // Pick the darkest spot; ties broken by closest to player
+        // Sort by: side wall first, then front wall, then floor; ties by light level then distance
         Optional<Candidate> best = candidates.stream().min(
-                Comparator.comparingInt(Candidate::lightLevel)
+                Comparator.comparingInt(Candidate::priority)
+                          .thenComparingInt(Candidate::lightLevel)
                           .thenComparingDouble(c -> c.pos().distSqr(playerPos))
         );
 
         best.ifPresent(c -> {
             if (c.isWall()) {
                 world.setBlock(c.pos(),
-                        Blocks.WALL_TORCH.defaultBlockState().setValue(WallTorchBlock.FACING, c.wallFacing()), 3);
+                        entry.wall().defaultBlockState().setValue(WallTorchBlock.FACING, c.wallFacing()), 3);
             } else {
-                world.setBlock(c.pos(), Blocks.TORCH.defaultBlockState(), 3);
+                world.setBlock(c.pos(), entry.floor().defaultBlockState(), 3);
             }
-            player.getInventory().getItem(torchSlot).shrink(1);
+            player.getInventory().getItem(entry.slot()).shrink(1);
         });
     }
 
-    private static int findTorchSlot(ServerPlayer player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            if (player.getInventory().getItem(i).is(Items.TORCH)) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }

@@ -15,7 +15,7 @@ public class KeyBindings {
         KEY_TOGGLE = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.torch-placer.toggle",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_L,
+                GLFW.GLFW_KEY_G,
                 CATEGORY
         ));
         KEY_CONFIG = KeyBindingHelper.registerKeyBinding(new KeyMapping(

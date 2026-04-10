@@ -1,0 +1,37 @@
+package torchplacer;
+
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.StandingAndWallBlockItem;
+
+import java.util.EnumMap;
+
+public class ModItems {
+    public static final EnumMap<WoodTorchVariant, Item> ITEMS = new EnumMap<>(WoodTorchVariant.class);
+
+    public static void register() {
+        for (WoodTorchVariant v : WoodTorchVariant.values()) {
+            Item item = new StandingAndWallBlockItem(
+                    ModBlocks.FLOOR.get(v),
+                    ModBlocks.WALL.get(v),
+                    new Item.Properties(),
+                    Direction.DOWN
+            );
+            Registry.register(BuiltInRegistries.ITEM,
+                    new ResourceLocation(TorchPlacer.MOD_ID, v.id + "_torch"), item);
+            ITEMS.put(v, item);
+        }
+
+        // Add all wood torches to the Tools & Utilities tab, after vanilla torch
+        Item[] woodTorches = ITEMS.values().toArray(new Item[0]);
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries ->
+                entries.addAfter(Items.TORCH, woodTorches)
+        );
+    }
+}

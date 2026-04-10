@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import torchplacer.PlacementMode;
@@ -102,11 +103,26 @@ public class TorchPlacerConfigScreen extends Screen {
         @Override
         protected void updateMessage() {
             setMessage(Component.literal("Light Threshold: " + lightThreshold));
+            setTooltip(Tooltip.create(Component.literal(
+                    levelDescription() + "\n\n" +
+                    "Hostile mobs spawn at light level 0.\n" +
+                    "Higher values = more torches placed."
+            )));
         }
 
         @Override
         protected void applyValue() {
             lightThreshold = (int) Math.round(this.value * 14);
+        }
+
+        private String levelDescription() {
+            if (lightThreshold == 0)  return "Level 0 — Pitch dark only, very few placements.";
+            if (lightThreshold <= 3)  return "Level " + lightThreshold + " — Very dark areas only.";
+            if (lightThreshold <= 6)  return "Level " + lightThreshold + " — Dim areas.";
+            if (lightThreshold == 7)  return "Level 7 — Default. Comfortable safety buffer.";
+            if (lightThreshold <= 10) return "Level " + lightThreshold + " — Moderately lit areas.";
+            if (lightThreshold <= 13) return "Level " + lightThreshold + " — Fairly bright areas, aggressive placement.";
+            return "Level 14 — Almost everywhere, maximum placement.";
         }
     }
 

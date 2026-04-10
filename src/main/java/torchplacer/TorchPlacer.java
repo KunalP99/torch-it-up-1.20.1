@@ -11,6 +11,8 @@ public class TorchPlacer implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModBlocks.register();
+        ModItems.register();
         TorchPlacerNetwork.registerServerReceiver();
         ServerTickEvents.END_SERVER_TICK.register(TorchPlacerLogic::tick);
         LOGGER.info("Torch Placer initialized.");

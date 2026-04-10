@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "torch-placer:block/acacia_torch" }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["W", "T"],
+  "key": {
+    "W": { "item": "minecraft:crimson_planks" },
+    "T": { "item": "minecraft:torch" }
+  },
+  "result": { "item": "torch-placer:crimson_torch", "count": 1 }
+}
