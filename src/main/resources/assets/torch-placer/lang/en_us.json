@@ -6,6 +6,8 @@
   "screen.torch-placer.save": "Save",
   "screen.torch-placer.cancel": "Cancel",
 
+  "item.torch-placer.torch_bag":      "Torch Bag",
+
   "item.torch-placer.oak_torch":      "Oak Torch",
   "item.torch-placer.spruce_torch":   "Spruce Torch",
   "item.torch-placer.birch_torch":    "Birch Torch",

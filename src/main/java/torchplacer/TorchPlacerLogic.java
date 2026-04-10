@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
@@ -30,17 +31,60 @@ public class TorchPlacerLogic {
         }
     }
 
-    private record TorchEntry(int slot, Block floor, Block wall) {}
+    private record TorchEntry(Runnable consume, Block floor, Block wall) {}
 
     private static TorchEntry findTorchEntry(ServerPlayer player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.is(Items.TORCH))
-                return new TorchEntry(i, Blocks.TORCH, Blocks.WALL_TORCH);
-            for (WoodTorchVariant v : WoodTorchVariant.values())
-                if (stack.is(ModItems.ITEMS.get(v)))
-                    return new TorchEntry(i, ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v));
+        var inv = player.getInventory();
+
+        // 1. Bag priority: find the first torch bag that has torches in it
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack bagStack = inv.getItem(i);
+            if (!(bagStack.getItem() instanceof TorchBagItem)) continue;
+
+            SimpleContainer bagInv = TorchBagItem.loadInventory(bagStack);
+            for (int j = 0; j < bagInv.getContainerSize(); j++) {
+                ItemStack torch = bagInv.getItem(j);
+                if (torch.isEmpty()) continue;
+                Block[] pair = getTorchBlocks(torch);
+                if (pair == null) continue;
+
+                final int bagPlayerSlot = i, bagTorchSlot = j;
+                return new TorchEntry(() -> {
+                    // Re-load fresh from NBT to avoid stale reference, shrink, then save back
+                    ItemStack currentBag = player.getInventory().getItem(bagPlayerSlot);
+                    SimpleContainer fresh = TorchBagItem.loadInventory(currentBag);
+                    fresh.getItem(bagTorchSlot).shrink(1);
+                    TorchBagItem.saveInventory(currentBag, fresh);
+                }, pair[0], pair[1]);
+            }
         }
+
+        // 2. Fallback: player inventory
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack.is(Items.TORCH)) {
+                final int slot = i;
+                return new TorchEntry(
+                        () -> player.getInventory().getItem(slot).shrink(1),
+                        Blocks.TORCH, Blocks.WALL_TORCH);
+            }
+            for (WoodTorchVariant v : WoodTorchVariant.values()) {
+                if (stack.is(ModItems.ITEMS.get(v))) {
+                    final int slot = i;
+                    return new TorchEntry(
+                            () -> player.getInventory().getItem(slot).shrink(1),
+                            ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v));
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Block[] getTorchBlocks(ItemStack stack) {
+        if (stack.is(Items.TORCH)) return new Block[]{Blocks.TORCH, Blocks.WALL_TORCH};
+        for (WoodTorchVariant v : WoodTorchVariant.values())
+            if (stack.is(ModItems.ITEMS.get(v)))
+                return new Block[]{ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v)};
         return null;
     }
 
@@ -108,7 +152,7 @@ public class TorchPlacerLogic {
             } else {
                 world.setBlock(c.pos(), entry.floor().defaultBlockState(), 3);
             }
-            player.getInventory().getItem(entry.slot()).shrink(1);
+            entry.consume().run();
         });
     }
 

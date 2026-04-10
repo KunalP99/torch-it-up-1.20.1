@@ -18,19 +18,19 @@ The mod checks your inventory in order and uses the first torch it finds — van
 
 In addition to the vanilla torch, the mod adds 11 wood-typed torches — one for each wood type in the game. Each has its own appearance and is treated identically to a vanilla torch for auto-placement purposes.
 
-| Torch | Crafting ingredient |
-|-------|-------------------|
-| Oak Torch | Oak Planks |
-| Spruce Torch | Spruce Planks |
-| Birch Torch | Birch Planks |
-| Jungle Torch | Jungle Planks |
-| Acacia Torch | Acacia Planks |
-| Dark Oak Torch | Dark Oak Planks |
-| Mangrove Torch | Mangrove Planks |
-| Cherry Torch | Cherry Planks |
-| Bamboo Torch | Bamboo Planks |
-| Crimson Torch | Crimson Planks |
-| Warped Torch | Warped Planks |
+| Torch | Crafting ingredients |
+|-------|---------------------|
+| Oak Torch | Oak Planks + Torch |
+| Spruce Torch | Spruce Planks + Torch |
+| Birch Torch | Birch Planks + Torch |
+| Jungle Torch | Jungle Planks + Torch |
+| Acacia Torch | Acacia Planks + Torch |
+| Dark Oak Torch | Dark Oak Planks + Torch |
+| Mangrove Torch | Mangrove Planks + Torch |
+| Cherry Torch | Cherry Planks + Torch |
+| Bamboo Torch | Bamboo Planks + Torch |
+| Crimson Torch | Crimson Planks + Torch |
+| Warped Torch | Warped Planks + Torch |
 
 ### Crafting
 

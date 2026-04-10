@@ -4,7 +4,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.chat.Component;
+import torchplacer.TorchBagMenu;
 import torchplacer.TorchPlacerConfig;
 import torchplacer.TorchPlacerNetwork;
 
@@ -14,6 +16,8 @@ public class TorchPlacerClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         CONFIG = TorchPlacerConfig.load();
+
+        MenuScreens.register(TorchBagMenu.TYPE, TorchBagScreen::new);
 
         KeyBindings.register();
 
