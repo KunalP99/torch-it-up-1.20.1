@@ -5,14 +5,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public class TorchBagMenu extends AbstractContainerMenu {
 
-    public static MenuType<TorchBagMenu> TYPE;
+    public static ExtendedScreenHandlerType<TorchBagMenu> TYPE;
 
     private final SimpleContainer bagInventory;
     private final InteractionHand hand;

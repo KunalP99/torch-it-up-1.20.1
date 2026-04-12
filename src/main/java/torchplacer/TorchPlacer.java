@@ -2,7 +2,9 @@ package torchplacer;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +15,8 @@ public class TorchPlacer implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        TorchBagMenu.TYPE = ScreenHandlerRegistry.registerExtended(
-                new ResourceLocation(MOD_ID, "torch_bag"),
-                (syncId, inv, buf) -> new TorchBagMenu(syncId, inv, buf)
-        );
+        TorchBagMenu.TYPE = new ExtendedScreenHandlerType<>(TorchBagMenu::new);
+        Registry.register(BuiltInRegistries.MENU, new ResourceLocation(MOD_ID, "torch_bag"), TorchBagMenu.TYPE);
         ModBlocks.register();
         ModItems.register();
         TorchPlacerNetwork.registerServerReceiver();
