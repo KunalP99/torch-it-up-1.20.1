@@ -13,6 +13,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.block.WallTorchBlock;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,6 +31,7 @@ public class TorchPlacerLogic {
     public static final Map<UUID, BlockPos> HELD_LIGHT_POSITIONS = new HashMap<>();
     public static final Map<UUID, BlockPos> DEFERRED_CLEARS = new HashMap<>();
     private static final int TORCH_LIGHT_LEVEL = 14;
+    private static final int SCAN_RADIUS = 4;
 
     public static void tick(MinecraftServer server) {
         tickDynamicLighting(server);
@@ -106,15 +111,13 @@ public class TorchPlacerLogic {
         Direction facing = player.getDirection();
         Direction sideA = facing.getClockWise();
         Direction sideB = facing.getCounterClockWise();
-        int radius = config.scanRadius;
-
         // priority: 0 = side wall, 1 = front/back wall, 2 = floor
         record Candidate(BlockPos pos, boolean isWall, Direction wallFacing, int lightLevel, int priority) {}
         List<Candidate> candidates = new ArrayList<>();
 
-        for (int dx = -radius; dx <= radius; dx++) {
+        for (int dx = -SCAN_RADIUS; dx <= SCAN_RADIUS; dx++) {
             for (int dy = -2; dy <= 3; dy++) {
-                for (int dz = -radius; dz <= radius; dz++) {
+                for (int dz = -SCAN_RADIUS; dz <= SCAN_RADIUS; dz++) {
                     BlockPos pos = playerPos.offset(dx, dy, dz);
 
                     if (!world.getBlockState(pos).isAir()) continue;
@@ -123,6 +126,8 @@ public class TorchPlacerLogic {
                     int skyLight = world.getBrightness(LightLayer.SKY, pos);
                     int light = Math.max(blockLight, skyLight - world.getSkyDarken());
                     if (light > config.lightThreshold) continue;
+
+                    if (!hasLineOfSight(world, player, pos)) continue;
 
                     // Wall placement: horizontal neighbor with a sturdy face toward the torch
                     if (config.placementMode != PlacementMode.FLOOR_ONLY) {
@@ -149,11 +154,11 @@ public class TorchPlacerLogic {
             }
         }
 
-        // Sort by: side wall first, then front wall, then floor; ties by light level then distance
+        // Sort by: side wall first, then front wall, then floor; ties by distance then light level
         Optional<Candidate> best = candidates.stream().min(
                 Comparator.comparingInt(Candidate::priority)
-                          .thenComparingInt(Candidate::lightLevel)
                           .thenComparingDouble(c -> c.pos().distSqr(playerPos))
+                          .thenComparingInt(Candidate::lightLevel)
         );
 
         best.ifPresent(c -> {
@@ -165,6 +170,17 @@ public class TorchPlacerLogic {
             }
             entry.consume().run();
         });
+    }
+
+    private static boolean hasLineOfSight(ServerLevel world, ServerPlayer player, BlockPos target) {
+        Vec3 eye = player.getEyePosition();
+        Vec3 center = Vec3.atCenterOf(target);
+        BlockHitResult hit = world.clip(new ClipContext(
+                eye, center,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                player));
+        return hit.getType() == HitResult.Type.MISS;
     }
 
     private static void tickDynamicLighting(MinecraftServer server) {

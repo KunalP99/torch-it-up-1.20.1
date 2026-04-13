@@ -18,8 +18,6 @@ public class TorchPlacerConfig {
     /** Place a torch when block light level is at or below this value (0–14). */
     public int lightThreshold = 7;
     public PlacementMode placementMode = PlacementMode.BOTH;
-    /** How many blocks from the player to scan (3–10). */
-    public int scanRadius = 5;
 
     public static TorchPlacerConfig load() {
         if (Files.exists(CONFIG_PATH)) {

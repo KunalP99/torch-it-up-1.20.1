@@ -21,7 +21,6 @@ public class TorchPlacerConfigScreen extends Screen {
     // Working copies — committed only on Save
     private int lightThreshold;
     private PlacementMode placementMode;
-    private int scanRadius;
 
     public TorchPlacerConfigScreen(Screen parent) {
         super(Component.translatable("screen.torch-placer.title"));
@@ -29,7 +28,6 @@ public class TorchPlacerConfigScreen extends Screen {
         this.config = TorchPlacerClient.CONFIG;
         this.lightThreshold = config.lightThreshold;
         this.placementMode = config.placementMode;
-        this.scanRadius = config.scanRadius;
     }
 
     @Override
@@ -53,9 +51,7 @@ public class TorchPlacerConfigScreen extends Screen {
                 .build());
         y += WIDGET_HEIGHT + 8;
 
-        // Scan radius slider
-        addRenderableWidget(new RadiusSlider(left, y, PANEL_WIDTH, WIDGET_HEIGHT));
-        y += WIDGET_HEIGHT + 16;
+        y += 16;
 
         // Save / Cancel buttons
         int half = PANEL_WIDTH / 2 - 4;
@@ -72,7 +68,6 @@ public class TorchPlacerConfigScreen extends Screen {
     private void save() {
         config.lightThreshold = lightThreshold;
         config.placementMode = placementMode;
-        config.scanRadius = scanRadius;
         config.save();
         if (this.minecraft != null && this.minecraft.getConnection() != null) {
             ClientPlayNetworking.send(TorchPlacerNetwork.CONFIG_SYNC, TorchPlacerNetwork.buildPacket(config));
@@ -126,20 +121,5 @@ public class TorchPlacerConfigScreen extends Screen {
         }
     }
 
-    private class RadiusSlider extends AbstractSliderButton {
-        RadiusSlider(int x, int y, int width, int height) {
-            super(x, y, width, height, Component.empty(), (scanRadius - 3) / 7.0);
-            updateMessage();
-        }
-
-        @Override
-        protected void updateMessage() {
-            setMessage(Component.literal("Scan Radius: " + scanRadius + " blocks"));
-        }
-
-        @Override
-        protected void applyValue() {
-            scanRadius = 3 + (int) Math.round(this.value * 7);
-        }
-    }
 }
+
