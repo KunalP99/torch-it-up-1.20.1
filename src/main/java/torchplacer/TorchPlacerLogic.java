@@ -11,16 +11,24 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.block.WallTorchBlock;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class TorchPlacerLogic {
 
+    public static final Map<UUID, BlockPos> HELD_LIGHT_POSITIONS = new HashMap<>();
+    private static final int TORCH_LIGHT_LEVEL = 14;
+
     public static void tick(MinecraftServer server) {
+        tickDynamicLighting(server);
         if (server.getTickCount() % 40 != 0) return;
 
         List<ServerPlayer> players = new ArrayList<>(server.getPlayerList().getPlayers());
@@ -156,6 +164,49 @@ public class TorchPlacerLogic {
             }
             entry.consume().run();
         });
+    }
+
+    private static void tickDynamicLighting(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            boolean holding = TorchBagItem.isTorch(player.getMainHandItem())
+                           || TorchBagItem.isTorch(player.getOffhandItem());
+            UUID uuid = player.getUUID();
+            ServerLevel world = (ServerLevel) player.level();
+
+            if (holding) {
+                BlockPos target = findLightPos(player, world);
+                if (target != null) {
+                    BlockPos current = HELD_LIGHT_POSITIONS.get(uuid);
+                    if (!target.equals(current)) {
+                        if (current != null) clearLightBlock(world, current);
+                        placeLightBlock(world, target);
+                        HELD_LIGHT_POSITIONS.put(uuid, target);
+                    }
+                }
+            } else {
+                BlockPos current = HELD_LIGHT_POSITIONS.remove(uuid);
+                if (current != null) clearLightBlock(world, current);
+            }
+        }
+    }
+
+    private static BlockPos findLightPos(ServerPlayer player, ServerLevel world) {
+        BlockPos feet = player.blockPosition();
+        if (world.getBlockState(feet).isAir()) return feet;
+        BlockPos head = feet.above();
+        if (world.getBlockState(head).isAir()) return head;
+        return null;
+    }
+
+    public static void clearLightBlock(ServerLevel world, BlockPos pos) {
+        if (world.getBlockState(pos).is(Blocks.LIGHT)) {
+            world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static void placeLightBlock(ServerLevel world, BlockPos pos) {
+        world.setBlock(pos, Blocks.LIGHT.defaultBlockState()
+                .setValue(LightBlock.LEVEL, TORCH_LIGHT_LEVEL), 3);
     }
 
 }
