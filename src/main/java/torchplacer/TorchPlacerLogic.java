@@ -178,8 +178,8 @@ public class TorchPlacerLogic {
                 if (target != null) {
                     BlockPos current = HELD_LIGHT_POSITIONS.get(uuid);
                     if (!target.equals(current)) {
-                        if (current != null) clearLightBlock(world, current);
                         placeLightBlock(world, target);
+                        if (current != null) clearLightBlock(world, current);
                         HELD_LIGHT_POSITIONS.put(uuid, target);
                     }
                 }
