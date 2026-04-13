@@ -18,6 +18,7 @@ public class TorchPlacerConfig {
     /** Place a torch when block light level is at or below this value (0–14). */
     public int lightThreshold = 7;
     public PlacementMode placementMode = PlacementMode.BOTH;
+    public TorchSource torchSource = TorchSource.BOTH;
 
     public static TorchPlacerConfig load() {
         if (Files.exists(CONFIG_PATH)) {

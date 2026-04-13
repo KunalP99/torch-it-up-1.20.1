@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import torchplacer.PlacementMode;
 import torchplacer.TorchPlacerConfig;
 import torchplacer.TorchPlacerNetwork;
+import torchplacer.TorchSource;
 
 public class TorchPlacerConfigScreen extends Screen {
     private static final int PANEL_WIDTH = 220;
@@ -21,6 +22,7 @@ public class TorchPlacerConfigScreen extends Screen {
     // Working copies — committed only on Save
     private int lightThreshold;
     private PlacementMode placementMode;
+    private TorchSource torchSource;
 
     public TorchPlacerConfigScreen(Screen parent) {
         super(Component.translatable("screen.torch-placer.title"));
@@ -28,6 +30,7 @@ public class TorchPlacerConfigScreen extends Screen {
         this.config = TorchPlacerClient.CONFIG;
         this.lightThreshold = config.lightThreshold;
         this.placementMode = config.placementMode;
+        this.torchSource = config.torchSource;
     }
 
     @Override
@@ -51,7 +54,16 @@ public class TorchPlacerConfigScreen extends Screen {
                 .build());
         y += WIDGET_HEIGHT + 8;
 
-        y += 16;
+        // Torch source cycle button
+        addRenderableWidget(Button.builder(
+                        Component.literal("Torch Source: " + torchSource.getDisplayName()),
+                        btn -> {
+                            torchSource = torchSource.next();
+                            btn.setMessage(Component.literal("Torch Source: " + torchSource.getDisplayName()));
+                        })
+                .bounds(left, y, PANEL_WIDTH, WIDGET_HEIGHT)
+                .build());
+        y += WIDGET_HEIGHT + 16;
 
         // Save / Cancel buttons
         int half = PANEL_WIDTH / 2 - 4;
@@ -68,6 +80,7 @@ public class TorchPlacerConfigScreen extends Screen {
     private void save() {
         config.lightThreshold = lightThreshold;
         config.placementMode = placementMode;
+        config.torchSource = torchSource;
         config.save();
         if (this.minecraft != null && this.minecraft.getConnection() != null) {
             ClientPlayNetworking.send(TorchPlacerNetwork.CONFIG_SYNC, TorchPlacerNetwork.buildPacket(config));

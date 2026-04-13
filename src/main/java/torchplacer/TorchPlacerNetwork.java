@@ -20,14 +20,19 @@ public class TorchPlacerNetwork {
             boolean enabled = buf.readBoolean();
             int lightThreshold = buf.readByte() & 0xFF;
             int modeOrdinal = buf.readByte() & 0xFF;
+            int sourceOrdinal = buf.readByte() & 0xFF;
 
             PlacementMode[] modes = PlacementMode.values();
             PlacementMode mode = modeOrdinal < modes.length ? modes[modeOrdinal] : PlacementMode.BOTH;
+
+            TorchSource[] sources = TorchSource.values();
+            TorchSource source = sourceOrdinal < sources.length ? sources[sourceOrdinal] : TorchSource.BOTH;
 
             TorchPlacerConfig config = new TorchPlacerConfig();
             config.enabled = enabled;
             config.lightThreshold = Math.max(0, Math.min(14, lightThreshold));
             config.placementMode = mode;
+            config.torchSource = source;
 
             server.execute(() -> PLAYER_CONFIGS.put(player.getUUID(), config));
         });
@@ -38,6 +43,7 @@ public class TorchPlacerNetwork {
         buf.writeBoolean(config.enabled);
         buf.writeByte(config.lightThreshold);
         buf.writeByte(config.placementMode.ordinal());
+        buf.writeByte(config.torchSource.ordinal());
         return buf;
     }
 }

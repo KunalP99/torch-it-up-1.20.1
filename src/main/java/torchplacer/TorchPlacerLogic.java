@@ -47,50 +47,56 @@ public class TorchPlacerLogic {
 
     private record TorchEntry(Runnable consume, Block floor, Block wall) {}
 
-    private static TorchEntry findTorchEntry(ServerPlayer player) {
+    private static TorchEntry findTorchEntry(ServerPlayer player, TorchSource source) {
         var inv = player.getInventory();
 
-        // 1. Bag priority: find the first torch bag that has torches in it
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack bagStack = inv.getItem(i);
-            if (!(bagStack.getItem() instanceof TorchBagItem)) continue;
+        // 1. Torch bag — skipped when INVENTORY_ONLY
+        if (source != TorchSource.INVENTORY_ONLY) {
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                ItemStack bagStack = inv.getItem(i);
+                if (!(bagStack.getItem() instanceof TorchBagItem)) continue;
 
-            SimpleContainer bagInv = TorchBagItem.loadInventory(bagStack);
-            for (int j = 0; j < bagInv.getContainerSize(); j++) {
-                ItemStack torch = bagInv.getItem(j);
-                if (torch.isEmpty()) continue;
-                Block[] pair = getTorchBlocks(torch);
-                if (pair == null) continue;
+                SimpleContainer bagInv = TorchBagItem.loadInventory(bagStack);
+                for (int j = 0; j < bagInv.getContainerSize(); j++) {
+                    ItemStack torch = bagInv.getItem(j);
+                    if (torch.isEmpty()) continue;
+                    Block[] pair = getTorchBlocks(torch);
+                    if (pair == null) continue;
 
-                final int bagPlayerSlot = i, bagTorchSlot = j;
-                return new TorchEntry(() -> {
-                    // Re-load fresh from NBT to avoid stale reference, shrink, then save back
-                    ItemStack currentBag = player.getInventory().getItem(bagPlayerSlot);
-                    SimpleContainer fresh = TorchBagItem.loadInventory(currentBag);
-                    fresh.getItem(bagTorchSlot).shrink(1);
-                    TorchBagItem.saveInventory(currentBag, fresh);
-                }, pair[0], pair[1]);
-            }
-        }
-
-        // 2. Fallback: player inventory
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i);
-            if (stack.is(Items.TORCH)) {
-                final int slot = i;
-                return new TorchEntry(
-                        () -> player.getInventory().getItem(slot).shrink(1),
-                        Blocks.TORCH, Blocks.WALL_TORCH);
-            }
-            for (WoodTorchVariant v : WoodTorchVariant.values()) {
-                if (stack.is(ModItems.ITEMS.get(v))) {
-                    final int slot = i;
-                    return new TorchEntry(
-                            () -> player.getInventory().getItem(slot).shrink(1),
-                            ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v));
+                    final int bagPlayerSlot = i, bagTorchSlot = j;
+                    return new TorchEntry(() -> {
+                        // Re-load fresh from NBT to avoid stale reference, shrink, then save back
+                        ItemStack currentBag = player.getInventory().getItem(bagPlayerSlot);
+                        SimpleContainer fresh = TorchBagItem.loadInventory(currentBag);
+                        fresh.getItem(bagTorchSlot).shrink(1);
+                        TorchBagItem.saveInventory(currentBag, fresh);
+                    }, pair[0], pair[1]);
                 }
             }
         }
+
+        // 2. Player inventory — skipped when BAG_ONLY
+        if (source != TorchSource.BAG_ONLY) {
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                ItemStack stack = inv.getItem(i);
+                if (stack.getItem() instanceof TorchBagItem) continue; // don't consume the bag itself
+                if (stack.is(Items.TORCH)) {
+                    final int slot = i;
+                    return new TorchEntry(
+                            () -> player.getInventory().getItem(slot).shrink(1),
+                            Blocks.TORCH, Blocks.WALL_TORCH);
+                }
+                for (WoodTorchVariant v : WoodTorchVariant.values()) {
+                    if (stack.is(ModItems.ITEMS.get(v))) {
+                        final int slot = i;
+                        return new TorchEntry(
+                                () -> player.getInventory().getItem(slot).shrink(1),
+                                ModBlocks.FLOOR.get(v), ModBlocks.WALL.get(v));
+                    }
+                }
+            }
+        }
+
         return null;
     }
 
@@ -103,7 +109,7 @@ public class TorchPlacerLogic {
     }
 
     private static void tryPlaceTorch(ServerPlayer player, TorchPlacerConfig config) {
-        TorchEntry entry = findTorchEntry(player);
+        TorchEntry entry = findTorchEntry(player, config.torchSource);
         if (entry == null) return;
 
         ServerLevel world = (ServerLevel) player.level();
