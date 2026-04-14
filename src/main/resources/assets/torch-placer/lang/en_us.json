@@ -8,14 +8,15 @@
 
   "item.torch-placer.torch_bag":      "Torch Bag",
 
-"item.torch-placer.spruce_torch":   "Spruce Torch",
-  "item.torch-placer.birch_torch":    "Birch Torch",
-  "item.torch-placer.jungle_torch":   "Jungle Torch",
-  "item.torch-placer.acacia_torch":   "Acacia Torch",
-  "item.torch-placer.dark_oak_torch": "Dark Oak Torch",
-  "item.torch-placer.mangrove_torch": "Mangrove Torch",
-  "item.torch-placer.cherry_torch":   "Cherry Torch",
-  "item.torch-placer.bamboo_torch":   "Bamboo Torch",
-  "item.torch-placer.crimson_torch":  "Crimson Torch",
-  "item.torch-placer.warped_torch":   "Warped Torch"
+"block.torch-placer.oak_torch":      "Oak Torch",
+  "block.torch-placer.spruce_torch":   "Spruce Torch",
+  "block.torch-placer.birch_torch":    "Birch Torch",
+  "block.torch-placer.jungle_torch":   "Jungle Torch",
+  "block.torch-placer.acacia_torch":   "Acacia Torch",
+  "block.torch-placer.dark_oak_torch": "Dark Oak Torch",
+  "block.torch-placer.mangrove_torch": "Mangrove Torch",
+  "block.torch-placer.cherry_torch":   "Cherry Torch",
+  "block.torch-placer.bamboo_torch":   "Bamboo Torch",
+  "block.torch-placer.crimson_torch":  "Crimson Torch",
+  "block.torch-placer.warped_torch":   "Warped Torch"
 }
