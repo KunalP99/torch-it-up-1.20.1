@@ -1,4 +1,4 @@
-# Torch Placer
+# Torch It Up
 
 A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark areas around you as you explore. Supports vanilla torches, soul torches, redstone torches, and 11 wood-variant torches. Also lights up the area around you while you hold a torch in your hand.
 
@@ -107,7 +107,7 @@ Place the matching wood plank directly above a vanilla torch. Yields 1 wood torc
 | `G` | Toggle auto-torch on/off | G |
 | *(unbound)* | Open settings screen | — |
 
-Rebind either key in **Options → Controls → Torch Placer**.
+Rebind either key in **Options → Controls → Torch It Up**.
 
 When you toggle the mod, a message appears above your hotbar confirming the new state (**Auto Torch: ON** / **Auto Torch: OFF**).
 

@@ -39,6 +39,6 @@ public class TorchPlacer implements ModInitializer {
             }
         });
 
-        LOGGER.info("Torch Placer initialized.");
+        LOGGER.info("Torch It Up initialized.");
     }
 }
