@@ -1,0 +1,16 @@
+{
+  "values": [
+    "minecraft:torch",
+    "torch-placer:oak_torch",
+    "torch-placer:spruce_torch",
+    "torch-placer:birch_torch",
+    "torch-placer:jungle_torch",
+    "torch-placer:acacia_torch",
+    "torch-placer:dark_oak_torch",
+    "torch-placer:mangrove_torch",
+    "torch-placer:cherry_torch",
+    "torch-placer:bamboo_torch",
+    "torch-placer:crimson_torch",
+    "torch-placer:warped_torch"
+  ]
+}

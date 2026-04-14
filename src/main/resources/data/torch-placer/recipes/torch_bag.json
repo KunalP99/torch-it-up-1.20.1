@@ -3,11 +3,12 @@
   "category": "misc",
   "pattern": [
     "LLL",
-    "L L",
+    "LTL",
     "LLL"
   ],
   "key": {
-    "L": { "item": "minecraft:leather" }
+    "L": { "item": "minecraft:leather" },
+    "T": { "tag": "torch-placer:placeable_torches" }
   },
   "result": {
     "item": "torch-placer:torch_bag",
