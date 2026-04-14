@@ -163,4 +163,4 @@ Controls where the auto-placer takes torches from.
 
 ## License
 
-This mod is free to use. You are welcome to include it in modpacks or use it in your own Minecraft game without any restrictions.
+All Rights Reserved. You are free to include this mod in your modpack. You may not redistribute, reupload, or modify the mod without permission.
