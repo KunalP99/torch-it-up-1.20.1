@@ -49,18 +49,27 @@ public class TorchPlacerClient implements ClientModInitializer {
 
             ItemStack mainHand = client.player.getMainHandItem();
             ItemStack offHand  = client.player.getOffhandItem();
-            if ((mainHand.is(Items.SOUL_TORCH) || offHand.is(Items.SOUL_TORCH)) && ++particleTick % 5 == 0) {
-                var pos  = client.player.position();
+            boolean mainSoul = mainHand.is(Items.SOUL_TORCH);
+            boolean offSoul  = offHand.is(Items.SOUL_TORCH);
+            if ((mainSoul || offSoul) && ++particleTick % 5 == 0) {
+                var eye  = client.player.getEyePosition();
                 var look = client.player.getLookAngle();
                 var rand = client.player.getRandom();
-                double tx = pos.x + look.x * 0.5;
-                double ty = pos.y + 1.0;
-                double tz = pos.z + look.z * 0.5;
-                client.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
-                        tx + (rand.nextDouble() - 0.5) * 0.15,
-                        ty + (rand.nextDouble() - 0.5) * 0.15,
-                        tz + (rand.nextDouble() - 0.5) * 0.15,
-                        0.0, 0.04, 0.0);
+                // Right-hand vector (rotate look 90° clockwise around Y axis)
+                double rx = look.z;
+                double rz = -look.x;
+                // Main hand = right side (+), offhand = left side (-)
+                double side = mainSoul ? 1.0 : -1.0;
+                double tx = eye.x + look.x * 0.35 + rx * 0.35 * side;
+                double ty = eye.y - 0.35;
+                double tz = eye.z + look.z * 0.35 + rz * 0.35 * side;
+                for (int i = 0; i < 2; i++) {
+                    client.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                            tx + (rand.nextDouble() - 0.5) * 0.35,
+                            ty + (rand.nextDouble() - 0.5) * 0.35,
+                            tz + (rand.nextDouble() - 0.5) * 0.35,
+                            0.0, 0.04, 0.0);
+                }
             }
 
             if (KeyBindings.KEY_TOGGLE.consumeClick()) {
