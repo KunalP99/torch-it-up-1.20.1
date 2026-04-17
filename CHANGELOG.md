@@ -1,13 +1,6 @@
 # Torch It Up — Changelog
 
-## 2026-04-17 (3)
-
-### Soul Torch
-- Holding a soul torch now spawns blue soul flame particles around the player, approximating a blue glow effect (true coloured light is not possible without shader mods)
-
----
-
-## 2026-04-17 (2)
+## 2026-04-18
 
 ### Underwater Torch
 - The underwater torch can now be crafted using any wood-variant torch in addition to the vanilla torch

@@ -63,7 +63,7 @@ The light updates as you move and disappears the moment you put the torch away. 
 
 ## Torch Bag
 
-The **Torch Bag** is a dedicated storage item that holds up to 27 torches of any type. Right-click the bag to open its inventory.
+The **Torch Bag** is a dedicated storage item that holds up to 27 stacks of torches of any type. Right-click the bag to open its inventory.
 
 - The auto-placer checks the bag **before** your regular inventory (when torch source is set to *Bag, then Inventory* or *Bag Only*).
 - Torches inside the bag are consumed during auto-placement without needing to move them to your hotbar.
