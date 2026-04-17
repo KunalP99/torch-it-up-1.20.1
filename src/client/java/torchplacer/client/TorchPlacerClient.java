@@ -63,11 +63,13 @@ public class TorchPlacerClient implements ClientModInitializer {
                 double tx = eye.x + look.x * 0.35 + rx * 0.35 * side;
                 double ty = eye.y - 0.35;
                 double tz = eye.z + look.z * 0.35 + rz * 0.35 * side;
-                client.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
-                        tx + (rand.nextDouble() - 0.5) * 0.35,
-                        ty + (rand.nextDouble() - 0.5) * 0.35,
-                        tz + (rand.nextDouble() - 0.5) * 0.35,
-                        0.0, 0.04, 0.0);
+                for (int i = 0; i < 2; i++) {
+                    client.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                            tx + (rand.nextDouble() - 0.5) * 0.35,
+                            ty + (rand.nextDouble() - 0.5) * 0.35,
+                            tz + (rand.nextDouble() - 0.5) * 0.35,
+                            0.0, 0.04, 0.0);
+                }
             }
 
             if (KeyBindings.KEY_TOGGLE.consumeClick()) {
