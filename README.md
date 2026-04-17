@@ -1,6 +1,6 @@
 # Torch It Up
 
-A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark areas around you as you explore. Supports vanilla torches, soul torches, redstone torches, and 11 wood-variant torches. Also lights up the area around you while you hold a torch in your hand.
+A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark areas around you as you explore. Supports vanilla torches, soul torches, redstone torches, 11 wood-variant torches, and an underwater torch. Also lights up the area around you while you hold a torch in your hand.
 
 ## Requirements
 
@@ -18,6 +18,8 @@ A Fabric mod for Minecraft 1.20.1 that automatically places torches in dark area
 | Dynamic lighting | Holding any torch illuminates the area around you |
 | Torch Bag | Dedicated storage bag that holds up to 27 stacks of torches |
 | Wood-variant torches | 11 custom torch types, one per wood type |
+| Underwater torch | A torch that survives and can be placed in water |
+| HUD counter | Shows your remaining torch count when the auto-placer is active |
 | Configurable | Light threshold, placement surface, and torch source |
 
 ---
@@ -75,7 +77,6 @@ The mod adds 11 wood-typed torches, one for each wood type in the game. They beh
 
 | Torch | Crafting ingredients |
 |-------|---------------------|
-| Oak Torch | Oak Planks + Torch |
 | Spruce Torch | Spruce Planks + Torch |
 | Birch Torch | Birch Planks + Torch |
 | Jungle Torch | Jungle Planks + Torch |
@@ -100,6 +101,39 @@ Place the matching wood plank directly above a vanilla torch. Yields 1 wood torc
 
 ---
 
+## Underwater Torch
+
+The **Underwater Torch** is a special torch that can be placed in and survives contact with water. Normal torches pop off when water flows over them — the underwater torch stays put.
+
+- Shows bubble particles when submerged instead of the usual flame
+- Fully supported by the auto-placer (placed in water blocks as well as air)
+- Works inside the Torch Bag
+
+### Crafting
+
+```
+[ Torch    ]
+[ Dried Kelp ]
+```
+
+Shapeless — place a vanilla torch and a dried kelp anywhere in the crafting grid. Yields 1 underwater torch.
+
+---
+
+## HUD Torch Counter
+
+When the auto-placer is enabled, a small torch icon and count appear in the **bottom-right corner** of the screen showing how many torches you have left. The colour shifts as your supply runs low:
+
+| Count | Colour |
+|-------|--------|
+| 16 or more | White |
+| 6 – 15 | Yellow |
+| 0 – 5 | Red |
+
+The counter respects your **Torch Source** setting — it only counts torches from wherever the auto-placer actually draws them.
+
+---
+
 ## Keybindings
 
 | Key | Action | Default |
@@ -115,7 +149,7 @@ When you toggle the mod, a message appears above your hotbar confirming the new 
 
 ## Settings Screen
 
-Open the settings screen with your bound key. Changes take effect after clicking **Save**.
+Open the **Torch It Up Settings** screen with your bound key. Changes take effect after clicking **Save**.
 
 ### Light Threshold
 
@@ -156,7 +190,8 @@ Controls where the auto-placer takes torches from.
 - Keep torches stocked — the mod consumes them just like placing manually.
 - The **Torch Bag** frees up inventory space and is checked before your inventory by default — load it up before a long caving session.
 - A **light threshold of 0** combined with **Floor Only** is useful for fully automated mine lighting with minimal torch use.
-- Soul torches and redstone torches work for dynamic hand-held lighting but are not used for auto-placement — only vanilla and wood-variant torches are placed automatically.
+- The **Underwater Torch** is the only torch the auto-placer will place in water blocks — bring some when exploring ocean monuments or underwater caves.
+- Soul torches and redstone torches work for dynamic hand-held lighting but are not used for auto-placement — only vanilla, wood-variant, and underwater torches are placed automatically.
 - The config is saved to `config/torch-placer.json` and persists between sessions.
 
 ---
