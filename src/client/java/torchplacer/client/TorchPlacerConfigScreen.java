@@ -23,6 +23,7 @@ public class TorchPlacerConfigScreen extends Screen {
     private int lightThreshold;
     private PlacementMode placementMode;
     private TorchSource torchSource;
+    private boolean showHudCounter;
 
     public TorchPlacerConfigScreen(Screen parent) {
         super(Component.translatable("screen.torch-placer.title"));
@@ -31,6 +32,7 @@ public class TorchPlacerConfigScreen extends Screen {
         this.lightThreshold = config.lightThreshold;
         this.placementMode = config.placementMode;
         this.torchSource = config.torchSource;
+        this.showHudCounter = config.showHudCounter;
     }
 
     @Override
@@ -63,6 +65,17 @@ public class TorchPlacerConfigScreen extends Screen {
                         })
                 .bounds(left, y, PANEL_WIDTH, WIDGET_HEIGHT)
                 .build());
+        y += WIDGET_HEIGHT + 8;
+
+        // HUD counter toggle button
+        addRenderableWidget(Button.builder(
+                        Component.literal("HUD Counter: " + (showHudCounter ? "ON" : "OFF")),
+                        btn -> {
+                            showHudCounter = !showHudCounter;
+                            btn.setMessage(Component.literal("HUD Counter: " + (showHudCounter ? "ON" : "OFF")));
+                        })
+                .bounds(left, y, PANEL_WIDTH, WIDGET_HEIGHT)
+                .build());
         y += WIDGET_HEIGHT + 16;
 
         // Save / Cancel buttons
@@ -81,6 +94,7 @@ public class TorchPlacerConfigScreen extends Screen {
         config.lightThreshold = lightThreshold;
         config.placementMode = placementMode;
         config.torchSource = torchSource;
+        config.showHudCounter = showHudCounter;
         config.save();
         if (this.minecraft != null && this.minecraft.getConnection() != null) {
             ClientPlayNetworking.send(TorchPlacerNetwork.CONFIG_SYNC, TorchPlacerNetwork.buildPacket(config));

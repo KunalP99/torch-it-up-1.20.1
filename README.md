@@ -130,7 +130,7 @@ When the auto-placer is enabled, a small torch icon and count appear in the **bo
 | 6 – 15 | Yellow |
 | 0 – 5 | Red |
 
-The counter respects your **Torch Source** setting — it only counts torches from wherever the auto-placer actually draws them.
+The counter respects your **Torch Source** setting — it only counts torches from wherever the auto-placer actually draws them. It can be toggled on or off in the **Torch It Up Settings** screen.
 
 ---
 

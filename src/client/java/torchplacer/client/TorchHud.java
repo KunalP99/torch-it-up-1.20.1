@@ -13,6 +13,7 @@ public class TorchHud {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.screen != null) return;
         if (!TorchPlacerClient.CONFIG.enabled) return;
+        if (!TorchPlacerClient.CONFIG.showHudCounter) return;
 
         int count = countTorches(client, TorchPlacerClient.CONFIG.torchSource);
         int color = count > 15 ? 0xFFFFFF : count > 5 ? 0xFFFF55 : 0xFF5555;

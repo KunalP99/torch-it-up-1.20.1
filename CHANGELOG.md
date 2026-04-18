@@ -2,6 +2,9 @@
 
 ## 2026-04-18
 
+### Config Screen
+- Added a **HUD Counter** toggle to the settings screen — turn the torch counter on or off without disabling the auto-placer
+
 ### Underwater Torch
 - The underwater torch can now be crafted using any wood-variant torch in addition to the vanilla torch
 

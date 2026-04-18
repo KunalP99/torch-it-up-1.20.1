@@ -19,6 +19,7 @@ public class TorchPlacerConfig {
     public int lightThreshold = 7;
     public PlacementMode placementMode = PlacementMode.BOTH;
     public TorchSource torchSource = TorchSource.BOTH;
+    public boolean showHudCounter = true;
 
     public static TorchPlacerConfig load() {
         if (Files.exists(CONFIG_PATH)) {
