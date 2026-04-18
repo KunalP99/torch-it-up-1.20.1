@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.LightLayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class TorchPlacer implements ModInitializer {
         TorchPlacerNetwork.registerServerReceiver();
         ServerTickEvents.END_SERVER_TICK.register(TorchPlacerLogic::tick);
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Commands.literal("torchesplaced")
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
@@ -38,8 +39,23 @@ public class TorchPlacer implements ModInitializer {
                             count, count == 1 ? "" : "es");
                     ctx.getSource().sendSuccess(() -> Component.literal(msg), false);
                     return 1;
-                }))
-        );
+                }));
+            dispatcher.register(Commands.literal("torchlight")
+                .executes(ctx -> {
+                    ServerPlayer player = ctx.getSource().getPlayerOrException();
+                    ServerLevel world = (ServerLevel) player.level();
+                    BlockPos pos = player.blockPosition();
+                    int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
+                    int skyLight  = world.getBrightness(LightLayer.SKY, pos);
+                    TorchPlacerConfig config = TorchPlacerNetwork.PLAYER_CONFIGS.getOrDefault(
+                            player.getUUID(), new TorchPlacerConfig());
+                    String willPlace = blockLight <= config.lightThreshold ? "yes" : "no";
+                    ctx.getSource().sendSuccess(() -> Component.literal(String.format(
+                            "Block light: %d | Sky light: %d | Auto-placer would place here: %s",
+                            blockLight, skyLight, willPlace)), false);
+                    return 1;
+                }));
+        });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             ServerPlayer player = handler.getPlayer();
