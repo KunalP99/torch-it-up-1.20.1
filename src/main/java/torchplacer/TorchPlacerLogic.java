@@ -173,6 +173,7 @@ public class TorchPlacerLogic {
                 if (inWater) state = state.setValue(UnderwaterTorchBlock.WATERLOGGED, true);
                 world.setBlock(c.pos(), state, 3);
             }
+            TorchStats.get(world.getServer()).increment(player.getUUID());
             entry.consume().run();
         });
     }

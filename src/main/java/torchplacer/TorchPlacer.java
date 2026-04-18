@@ -1,12 +1,15 @@
 package torchplacer;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +28,18 @@ public class TorchPlacer implements ModInitializer {
         ModItems.register();
         TorchPlacerNetwork.registerServerReceiver();
         ServerTickEvents.END_SERVER_TICK.register(TorchPlacerLogic::tick);
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+            dispatcher.register(Commands.literal("torchesplaced")
+                .executes(ctx -> {
+                    ServerPlayer player = ctx.getSource().getPlayerOrException();
+                    long count = TorchStats.get(ctx.getSource().getServer()).getCount(player.getUUID());
+                    String msg = String.format("You have auto-placed %,d torch%s.",
+                            count, count == 1 ? "" : "es");
+                    ctx.getSource().sendSuccess(() -> Component.literal(msg), false);
+                    return 1;
+                }))
+        );
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             ServerPlayer player = handler.getPlayer();

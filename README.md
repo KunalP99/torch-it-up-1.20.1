@@ -185,6 +185,16 @@ Controls where the auto-placer takes torches from.
 
 ---
 
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/torchesplaced` | Shows how many torches the auto-placer has placed for you in this world |
+
+The count persists across death, logout, and server restarts. It is saved per-world and per-player.
+
+---
+
 ## Tips
 
 - Keep torches stocked — the mod consumes them just like placing manually.
