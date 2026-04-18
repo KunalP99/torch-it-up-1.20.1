@@ -189,7 +189,7 @@ Controls where the auto-placer takes torches from.
 
 | Command | Description |
 |---------|-------------|
-| `/torchesplaced` | Shows how many torches the auto-placer has placed for you in this world |
+| `/torchesplaced` | Shows how many torches you have placed in this world (manually and by the auto-placer) |
 
 The count persists across death, logout, and server restarts. It is saved per-world and per-player.
 
