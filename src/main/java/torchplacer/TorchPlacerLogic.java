@@ -124,7 +124,7 @@ public class TorchPlacerLogic {
 
                     var posState = world.getBlockState(pos);
                     boolean posIsWater = posState.is(Blocks.WATER);
-                    if (!posState.isAir() && !(isUnderwater && posIsWater)) continue;
+                    if (isUnderwater ? !posIsWater : !posState.isAir()) continue;
 
                     int blockLight = world.getBrightness(LightLayer.BLOCK, pos);
                     int skyLight = world.getBrightness(LightLayer.SKY, pos);
