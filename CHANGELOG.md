@@ -2,6 +2,9 @@
 
 ## 2026-04-18
 
+### Underwater Torch
+- The underwater torch can no longer be manually placed outside of water — attempting to place it in air or on dry land will do nothing
+
 ### Commands
 - Added `/torchesplaced` command — shows how many torches you have placed in this world (both manually and by the auto-placer). The count persists across death, logout, and server restarts
 - `/torchesplaced` message updated to read "You have placed X torches in this world." to reflect both placement types
